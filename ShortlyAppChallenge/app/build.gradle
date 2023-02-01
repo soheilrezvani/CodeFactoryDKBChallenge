@@ -2,16 +2,18 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.android.extensions'
-
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id "com.google.dagger.hilt.android"
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.srn.shortlyappchallenge"
         minSdk 21
-        targetSdk 31
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -34,6 +36,9 @@ android {
     androidExtensions {
         experimental = true
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -51,6 +56,11 @@ dependencies {
 
     def gson_version = "2.8.9"
     implementation "com.google.code.gson:gson:$gson_version"
+
+    //hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

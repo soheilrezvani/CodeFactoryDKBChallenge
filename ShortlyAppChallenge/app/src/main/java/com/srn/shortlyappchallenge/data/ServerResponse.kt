@@ -13,7 +13,7 @@ data class ServerResponse<T>(
     val error: String? = null,
 ) {
     enum class ResponseStatus() {
-        LOADING, SUCCESS, ERROR
+        LOADING, SUCCESS, ERROR , FAIL
     }
 
     companion object {
@@ -21,11 +21,14 @@ data class ServerResponse<T>(
         fun <T> success(data: T?): ServerResponse<T> =
             ServerResponse(SUCCESS, true, data)
 
-        fun <T> error(errorCode: Int?, errorMessage: String?): ServerResponse<T> =
+        fun <T> error(errorCode: Int? , errorMessage: String?): ServerResponse<T> =
             ServerResponse(ERROR, false, null, errorCode, errorMessage)
 
-        fun <T> loading(data: T? = null): ServerResponse<T> =
+        fun <T> loading(): ServerResponse<T> =
             ServerResponse(LOADING, true, null)
+
+        fun <T> fail(errorCode: Int? , errorMessage: String?): ServerResponse<T> =
+            ServerResponse(FAIL, false , null , errorCode , errorMessage)
 
     }
 

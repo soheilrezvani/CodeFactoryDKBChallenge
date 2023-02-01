@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
  * Created by SoheilR .
  */
 interface ApiRepository {
-    fun shortenApi(): Flow<ServerResponse<Api>>
+    fun getShortenedApi(url: String): Flow<ServerResponse<Api>>
 }
