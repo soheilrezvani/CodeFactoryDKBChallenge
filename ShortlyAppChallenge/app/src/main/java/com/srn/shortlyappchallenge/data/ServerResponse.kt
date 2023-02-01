@@ -7,7 +7,6 @@ import com.srn.shortlyappchallenge.data.ServerResponse.ResponseStatus.*
  */
 data class ServerResponse<T>(
     val status: ResponseStatus,
-    val ok: Boolean,
     val result: T?,
     val error_code: Int? = null,
     val error: String? = null,
@@ -19,16 +18,16 @@ data class ServerResponse<T>(
     companion object {
 
         fun <T> success(data: T?): ServerResponse<T> =
-            ServerResponse(SUCCESS, true, data)
+            ServerResponse(SUCCESS, data)
 
         fun <T> error(errorCode: Int? , errorMessage: String?): ServerResponse<T> =
-            ServerResponse(ERROR, false, null, errorCode, errorMessage)
+            ServerResponse(ERROR, null, errorCode, errorMessage)
 
         fun <T> loading(): ServerResponse<T> =
-            ServerResponse(LOADING, true, null)
+            ServerResponse(LOADING, null)
 
         fun <T> fail(errorCode: Int? , errorMessage: String?): ServerResponse<T> =
-            ServerResponse(FAIL, false , null , errorCode , errorMessage)
+            ServerResponse(FAIL, null , errorCode , errorMessage)
 
     }
 

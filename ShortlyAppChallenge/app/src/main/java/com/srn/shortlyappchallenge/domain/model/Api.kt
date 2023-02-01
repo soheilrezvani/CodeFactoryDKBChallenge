@@ -1,6 +1,7 @@
 package com.srn.shortlyappchallenge.domain.model
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.SerialName
 
@@ -9,27 +10,33 @@ import kotlinx.serialization.SerialName
  */
 @Parcelize
 data class Api(
+    private val ok: Boolean,
+    private val result: ApiResult,
+): Parcelable
+
+@Parcelize
+data class ApiResult(
     @SerialName("code")
     private val code: String,
 
-    @SerialName("short_link")
+    @SerializedName("short_link")
     private val shortLink: String,
 
-    @SerialName("full_short_link")
+    @SerializedName("full_short_link")
     private val fullShortLink: String,
 
-    @SerialName("short_link2")
+    @SerializedName("short_link2")
     private val shortLink2: String,
 
-    @SerialName("full_short_link2")
+    @SerializedName("full_short_link2")
     private val fullShortLink2: String,
 
-    @SerialName("share_link")
+    @SerializedName("share_link")
     private val shareLink: String,
 
-    @SerialName("full_share_link")
+    @SerializedName("full_share_link")
     private val fullShareLink: String,
 
-    @SerialName("original_link")
+    @SerializedName("original_link")
     private val originalLink: String,
-) : Parcelable {}
+) : Parcelable

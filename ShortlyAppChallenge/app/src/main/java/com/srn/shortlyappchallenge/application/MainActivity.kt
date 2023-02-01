@@ -23,6 +23,13 @@ class MainActivity : AppCompatActivity() {
 
         setupObservers()
         viewModel.getShortenApi(sampleUrl)
+        setupViews()
+    }
+
+    private fun setupViews() {
+        binding.shortenUrlBtn.setOnClickListener {
+            viewModel.getShortenApi(sampleUrl)
+        }
     }
 
     private fun setupObservers() {
@@ -38,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showToast(message: String) {
+        binding.textView.text = message
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
