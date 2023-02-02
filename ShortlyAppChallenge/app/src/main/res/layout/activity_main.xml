@@ -8,25 +8,43 @@
         android:layout_height="match_parent"
         tools:context=".application.MainActivity">
 
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/inputUrlEt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/shortenUrlBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
         <Button
             android:id="@+id/shortenUrlBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/shorten_button_title"
 
-            android:text="Call Api"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/apiListRV"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:items="@{viewModel.resultListLiveData}"
+            app:layout_constraintBottom_toTopOf="@+id/inputUrlEt"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.srn.shortlyappchallenge.application.screen.ApiListViewModel" />
+
+    </data>
 </layout>

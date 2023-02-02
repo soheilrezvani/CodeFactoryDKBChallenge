@@ -10,33 +10,33 @@ import kotlinx.serialization.SerialName
  */
 @Parcelize
 data class Api(
-    private val ok: Boolean,
-    private val result: ApiResult,
-): Parcelable
+    val ok: Boolean,
+    val result: ApiResult,
+) : Parcelable
 
 @Parcelize
 data class ApiResult(
     @SerialName("code")
-    private val code: String,
+    val code: String,
 
     @SerializedName("short_link")
-    private val shortLink: String,
+    val shortLink: String,
 
     @SerializedName("full_short_link")
-    private val fullShortLink: String,
+    val fullShortLink: String,
 
     @SerializedName("short_link2")
-    private val shortLink2: String,
+    val shortLink2: String,
 
     @SerializedName("full_short_link2")
-    private val fullShortLink2: String,
+    val fullShortLink2: String,
 
     @SerializedName("share_link")
-    private val shareLink: String,
+    val shareLink: String,
 
     @SerializedName("full_share_link")
-    private val fullShareLink: String,
+    val fullShareLink: String,
 
     @SerializedName("original_link")
-    private val originalLink: String,
+    val originalLink: String,
 ) : Parcelable

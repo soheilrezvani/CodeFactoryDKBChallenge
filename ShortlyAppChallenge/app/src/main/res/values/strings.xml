@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ShortlyAppChallenge</string>
+    <string name="shorten_button_title">SHORTEN IT!</string>
 </resources>

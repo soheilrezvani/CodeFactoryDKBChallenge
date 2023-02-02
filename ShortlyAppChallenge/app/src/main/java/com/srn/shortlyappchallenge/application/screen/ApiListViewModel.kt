@@ -21,6 +21,9 @@ class ApiListViewModel @Inject constructor(
     private val shortenApiUseCase: ShortenApiUseCase,
 ) : ViewModel() {
 
+    val resultListLiveData: MutableLiveData<List<Api>> = MutableLiveData()
+    private val resultList: MutableList<Api> = emptyList<Api>().toMutableList()
+
     private val _shortenedUrl: MutableLiveData<Api> = MutableLiveData()
     val shortenedUrl: LiveData<Api> = _shortenedUrl
 
@@ -41,7 +44,11 @@ class ApiListViewModel @Inject constructor(
                 when (serverResponse.status) {
 
                     LOADING -> loadingSingleEvent.value = true
-                    SUCCESS -> _shortenedUrl.value = serverResponse.result
+                    SUCCESS -> {
+                        _shortenedUrl.value = serverResponse.result
+                        serverResponse.result?.let { resultList.add(it) }
+                        resultListLiveData.value = resultList
+                    }
                     FAIL -> errorSingleEvent.value = serverResponse.error
                     ERROR -> errorSingleEvent.value = serverResponse.error
                 }
