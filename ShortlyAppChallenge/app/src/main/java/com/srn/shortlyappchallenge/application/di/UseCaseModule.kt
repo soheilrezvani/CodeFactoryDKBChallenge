@@ -1,6 +1,8 @@
 package com.srn.shortlyappchallenge.application.di
 
 import com.srn.shortlyappchallenge.domain.repository.ApiRepository
+import com.srn.shortlyappchallenge.domain.usecase.DeleteApiUseCase
+import com.srn.shortlyappchallenge.domain.usecase.InsertApiInDBUseCase
 import com.srn.shortlyappchallenge.domain.usecase.ShortenApiUseCase
 import dagger.Module
 import dagger.Provides
@@ -17,4 +19,12 @@ class UseCaseModule {
     @Provides
     fun provideShortenApiUseCase(repository: ApiRepository) =
         ShortenApiUseCase(repository)
+
+    @Provides
+    fun provideInsertApiInDBUseCase(repository: ApiRepository) =
+        InsertApiInDBUseCase(repository)
+
+    @Provides
+    fun provideDeleteApiUseCase(repository: ApiRepository) =
+        DeleteApiUseCase(repository)
 }

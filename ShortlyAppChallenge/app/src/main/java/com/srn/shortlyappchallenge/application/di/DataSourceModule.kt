@@ -1,7 +1,9 @@
 package com.srn.shortlyappchallenge.application.di
 
-import com.srn.shortlyappchallenge.data.datasource.ApiRemoteDataSource
-import com.srn.shortlyappchallenge.data.datasource.ApiRemoteDataSourceImpl
+import com.srn.shortlyappchallenge.data.datasource.local.ApiLocalDataSource
+import com.srn.shortlyappchallenge.data.datasource.local.ApiLocalDataSourceImpl
+import com.srn.shortlyappchallenge.data.datasource.remote.ApiRemoteDataSource
+import com.srn.shortlyappchallenge.data.datasource.remote.ApiRemoteDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,4 +22,10 @@ class DataSourceModule {
     fun provideApiRemoteDataSource(
         impl: ApiRemoteDataSourceImpl,
     ): ApiRemoteDataSource = impl
+
+    @Provides
+    @Singleton
+    fun provideApiLocalDataSource(
+        impl: ApiLocalDataSourceImpl,
+    ): ApiLocalDataSource = impl
 }

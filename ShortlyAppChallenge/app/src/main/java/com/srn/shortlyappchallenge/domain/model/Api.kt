@@ -1,6 +1,9 @@
 package com.srn.shortlyappchallenge.domain.model
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.SerialName
@@ -8,15 +11,19 @@ import kotlinx.serialization.SerialName
 /**
  * Created by SoheilR .
  */
+
 @Parcelize
 data class Api(
     val ok: Boolean,
     val result: ApiResult,
 ) : Parcelable
 
+@Entity(tableName = "ApiResult")
 @Parcelize
 data class ApiResult(
     @SerialName("code")
+    @ColumnInfo(name = "apiCode")
+    @PrimaryKey
     val code: String,
 
     @SerializedName("short_link")

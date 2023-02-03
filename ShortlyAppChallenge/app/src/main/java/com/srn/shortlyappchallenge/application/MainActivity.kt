@@ -56,6 +56,9 @@ class MainActivity : AppCompatActivity() {
             Log.d("SSS", "result of the Api : ${it.toString()}")
             adapter.submitList(it)
         }
+        viewModel.deleteTaskEvent.observe(this) {
+            showToast("Task is deleted")
+        }
     }
 
     private fun showToast(message: String) {

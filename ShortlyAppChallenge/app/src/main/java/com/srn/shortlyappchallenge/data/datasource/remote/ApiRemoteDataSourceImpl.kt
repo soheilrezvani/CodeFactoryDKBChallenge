@@ -1,4 +1,4 @@
-package com.srn.shortlyappchallenge.data.datasource
+package com.srn.shortlyappchallenge.data.datasource.remote
 
 import com.srn.shortlyappchallenge.data.ServerResponse
 import com.srn.shortlyappchallenge.data.api.ShortenApi

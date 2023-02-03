@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.srn.shortlyappchallenge.application.util.event.SingleLiveEvent
 import com.srn.shortlyappchallenge.data.ServerResponse.ResponseStatus.*
 import com.srn.shortlyappchallenge.domain.model.Api
+import com.srn.shortlyappchallenge.domain.model.ApiResult
+import com.srn.shortlyappchallenge.domain.usecase.DeleteApiUseCase
+import com.srn.shortlyappchallenge.domain.usecase.InsertApiInDBUseCase
 import com.srn.shortlyappchallenge.domain.usecase.ShortenApiUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,6 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ApiListViewModel @Inject constructor(
     private val shortenApiUseCase: ShortenApiUseCase,
+    private val insertApiUseCase: InsertApiInDBUseCase,
+    private val deleteApiUseCase: DeleteApiUseCase
 ) : ViewModel() {
 
     val resultListLiveData: MutableLiveData<List<Api>> = MutableLiveData()
@@ -29,6 +34,9 @@ class ApiListViewModel @Inject constructor(
 
     private val loadingSingleEvent = SingleLiveEvent<Boolean>()
     private val errorSingleEvent = SingleLiveEvent<String>()
+
+    private val _deleteTaskEvent = MutableLiveData<SingleLiveEvent<Unit>>()
+    val deleteTaskEvent: LiveData<SingleLiveEvent<Unit>> = _deleteTaskEvent
 
     fun getLoadingToastEvent(): SingleLiveEvent<Boolean> {
         return loadingSingleEvent
@@ -45,14 +53,28 @@ class ApiListViewModel @Inject constructor(
 
                     LOADING -> loadingSingleEvent.value = true
                     SUCCESS -> {
-                        _shortenedUrl.value = serverResponse.result
-                        serverResponse.result?.let { resultList.add(it) }
+                        _shortenedUrl.value = serverResponse.data
+                        serverResponse.data?.let { resultList.add(it) }
                         resultListLiveData.value = resultList
+                        serverResponse.data?.let { saveShortenedApiInDB(it.result) }
                     }
                     FAIL -> errorSingleEvent.value = serverResponse.error
                     ERROR -> errorSingleEvent.value = serverResponse.error
                 }
             }
+        }
+    }
+    private fun deleteApi(apiCode: String) {
+        viewModelScope.launch {
+            deleteApiUseCase.invoke(apiCode)
+            _deleteTaskEvent.value = SingleLiveEvent()
+        }
+    }
+
+    private fun saveShortenedApiInDB(item: ApiResult) {
+        viewModelScope.launch {
+            insertApiUseCase.invoke(item)
+            deleteApi(item.code)
         }
     }
 }

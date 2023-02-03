@@ -20,4 +20,5 @@ class RepositoryModule {
     fun provideApiRepository(
         impl: ApiRepositoryImpl,
     ): ApiRepository = impl
+
 }
