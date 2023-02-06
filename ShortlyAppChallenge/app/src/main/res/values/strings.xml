@@ -1,4 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ShortlyAppChallenge</string>
     <string name="shorten_button_title">SHORTEN IT!</string>
+    <string name="copy_button_title">COPY</string>
+    <string name="copied_button_title">COPIED!</string>
+    <string name="header_item_list_txt">Your Link History</string>
+    <string name="empty_item_list_title_txt">Let\'s get started!</string>
+    <string name="empty_item_list_description_txt">Paste your first link into \n the field to shorten it</string>
+    <string name="hint_input_url_text">Shorten a link here..</string>
+    <string name="error_input_url_text">Please add a link here</string>
 </resources>
