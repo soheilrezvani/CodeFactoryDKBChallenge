@@ -9,6 +9,7 @@ import com.srn.shortlyappchallenge.data.ServerResponse.ResponseStatus.*
 import com.srn.shortlyappchallenge.domain.model.Api
 import com.srn.shortlyappchallenge.domain.model.ApiResult
 import com.srn.shortlyappchallenge.domain.usecase.DeleteApiUseCase
+import com.srn.shortlyappchallenge.domain.usecase.GetApiListFromDBUseCase
 import com.srn.shortlyappchallenge.domain.usecase.InsertApiInDBUseCase
 import com.srn.shortlyappchallenge.domain.usecase.ShortenApiUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,11 +24,9 @@ import javax.inject.Inject
 class ApiListViewModel @Inject constructor(
     private val shortenApiUseCase: ShortenApiUseCase,
     private val insertApiUseCase: InsertApiInDBUseCase,
-    private val deleteApiUseCase: DeleteApiUseCase
+    private val deleteApiUseCase: DeleteApiUseCase,
+    private val apiListDBUseCase: GetApiListFromDBUseCase,
 ) : ViewModel() {
-
-    val resultListLiveData: MutableLiveData<List<Api>> = MutableLiveData()
-    private val resultList: MutableList<Api> = emptyList<Api>().toMutableList()
 
     private val _shortenedUrl: MutableLiveData<Api> = MutableLiveData()
     val shortenedUrl: LiveData<Api> = _shortenedUrl
@@ -35,8 +34,17 @@ class ApiListViewModel @Inject constructor(
     private val loadingSingleEvent = SingleLiveEvent<Boolean>()
     private val errorSingleEvent = SingleLiveEvent<String>()
 
-    private val _deleteTaskEvent = MutableLiveData<SingleLiveEvent<Unit>>()
-    val deleteTaskEvent: LiveData<SingleLiveEvent<Unit>> = _deleteTaskEvent
+    private val _deleteApiEvent = MutableLiveData<SingleLiveEvent<Unit>>()
+    val deleteApiEvent: LiveData<SingleLiveEvent<Unit>> = _deleteApiEvent
+
+    private val _savedApiList =  MutableLiveData<List<ApiResult>>()
+    val savedApiList: LiveData<List<ApiResult>> = _savedApiList
+
+    private val _copyClipBoardLiveEvent = MutableLiveData<String>()
+    val copyClipBoardLiveEvent: LiveData<String> = _copyClipBoardLiveEvent
+
+    private val _saveApiEvent = MutableLiveData<SingleLiveEvent<Unit>>()
+    val saveApiEvent: LiveData<SingleLiveEvent<Unit>> = _saveApiEvent
 
     fun getLoadingToastEvent(): SingleLiveEvent<Boolean> {
         return loadingSingleEvent
@@ -44,6 +52,14 @@ class ApiListViewModel @Inject constructor(
 
     fun getErrorToastEvent(): SingleLiveEvent<String> {
         return errorSingleEvent
+    }
+
+    fun getApiListFromDB() {
+        viewModelScope.launch {
+            apiListDBUseCase.invoke().collect {
+                _savedApiList.value = it
+            }
+        }
     }
 
     fun getShortenApi(url: String) {
@@ -54,9 +70,8 @@ class ApiListViewModel @Inject constructor(
                     LOADING -> loadingSingleEvent.value = true
                     SUCCESS -> {
                         _shortenedUrl.value = serverResponse.data
-                        serverResponse.data?.let { resultList.add(it) }
-                        resultListLiveData.value = resultList
                         serverResponse.data?.let { saveShortenedApiInDB(it.result) }
+                        getApiListFromDB()
                     }
                     FAIL -> errorSingleEvent.value = serverResponse.error
                     ERROR -> errorSingleEvent.value = serverResponse.error
@@ -64,17 +79,31 @@ class ApiListViewModel @Inject constructor(
             }
         }
     }
+
+    fun delete(apiCode: String) {
+        deleteApi(apiCode)
+    }
+
     private fun deleteApi(apiCode: String) {
         viewModelScope.launch {
             deleteApiUseCase.invoke(apiCode)
-            _deleteTaskEvent.value = SingleLiveEvent()
+            _deleteApiEvent.value = SingleLiveEvent()
+        }
+        getApiListFromDB()
+    }
+
+    fun saveShortenedApiInDB(item: ApiResult) {
+        viewModelScope.launch {
+            insertApiUseCase.invoke(item)
+            _saveApiEvent.value = SingleLiveEvent()
         }
     }
 
-    private fun saveShortenedApiInDB(item: ApiResult) {
-        viewModelScope.launch {
-            insertApiUseCase.invoke(item)
-            deleteApi(item.code)
-        }
+    fun isCopiedIntoClipboard(url: String) : Boolean {
+        return url == _copyClipBoardLiveEvent.value
+    }
+
+    fun copyIntoClipBoard(url: String) {
+        _copyClipBoardLiveEvent.value = url
     }
 }

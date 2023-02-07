@@ -21,9 +21,13 @@ data class Api(
 @Entity(tableName = "ApiResult")
 @Parcelize
 data class ApiResult(
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    val id: Int,
+
     @SerialName("code")
     @ColumnInfo(name = "apiCode")
-    @PrimaryKey
     val code: String,
 
     @SerializedName("short_link")
@@ -46,4 +50,5 @@ data class ApiResult(
 
     @SerializedName("original_link")
     val originalLink: String,
+
 ) : Parcelable

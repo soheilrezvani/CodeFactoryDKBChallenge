@@ -14,4 +14,6 @@ interface ApiRepository {
     suspend fun saveShortenedApi(item: ApiResult)
 
     suspend fun deleteApi(apiCode: String)
+
+    suspend fun getApiList(): Flow<List<ApiResult>>
 }

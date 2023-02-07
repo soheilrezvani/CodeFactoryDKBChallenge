@@ -41,4 +41,17 @@ class ApiRepositoryImpl @Inject constructor(
             localDataSource.deleteApi(apiCode)
         }
     }
+
+    override suspend fun getApiList(): Flow<List<ApiResult>> {
+        return flow {
+
+            val result = localDataSource.getShortenedApiList()
+            if (result.data != null) {
+                emit(result.data)
+            } else
+                emit(emptyList())
+
+        }.flowOn(Dispatchers.IO)
+    }
+
 }

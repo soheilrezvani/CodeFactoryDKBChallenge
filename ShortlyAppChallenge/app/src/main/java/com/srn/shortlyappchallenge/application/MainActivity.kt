@@ -1,16 +1,18 @@
 package com.srn.shortlyappchallenge.application
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.srn.shortlyappchallenge.R
 import com.srn.shortlyappchallenge.application.screen.ApiListViewModel
 import com.srn.shortlyappchallenge.application.screen.adapter.ApiListAdapter
+import com.srn.shortlyappchallenge.application.util.copyToClipboard
 import com.srn.shortlyappchallenge.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -18,7 +20,6 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: ApiListViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var adapter: ApiListAdapter
-    val sampleUrl = "example.org/very/long/link.html"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +27,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupObservers()
-        viewModel.getShortenApi(sampleUrl)
         setupViews()
+        viewModel.getApiListFromDB()
     }
 
     private fun setupViews() {
@@ -35,14 +36,29 @@ class MainActivity : AppCompatActivity() {
             val input = binding.inputUrlEt.text
             if (!input.isNullOrEmpty()) {
                 viewModel.getShortenApi(input.toString())
-            }else {
-                binding.inputUrlEt.error = "Please add a link here"
             }
+            updateUi(input.isNullOrEmpty())
         }
+        setupAdapter()
+    }
+
+    private fun updateUi(isEmpty: Boolean) = if (isEmpty) {
+        binding.inputUrlEt.hint = getString(R.string.error_input_url_text)
+        binding.inputUrlEt.setHintTextColor(ContextCompat.getColor(this,
+            R.color.error_input_text_color))
+    } else {
+        binding.inputUrlEt.hint = getString(R.string.hint_input_url_text)
+        binding.inputUrlEt.setHintTextColor(ContextCompat.getColor(this,
+            R.color.hint_input_text_color))
+        binding.inputUrlEt.text?.clear()
+    }
+
+    private fun setupAdapter() {
         adapter = ApiListAdapter(viewModel)
-        binding.apiListRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL ,false)
-        binding.apiListRV.adapter = adapter
+        binding.apiListRV.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.apiListRV.setHasFixedSize(true)
+        binding.apiListRV.adapter = adapter
     }
 
     private fun setupObservers() {
@@ -52,13 +68,25 @@ class MainActivity : AppCompatActivity() {
         viewModel.getErrorToastEvent().observe(this) {
             it?.let { it1 -> showToast(it1) }
         }
-        viewModel.resultListLiveData.observe(this) {
-            Log.d("SSS", "result of the Api : ${it.toString()}")
+        viewModel.savedApiList.observe(this) {
             adapter.submitList(it)
+            binding.apiListRV.scrollToPosition(it.size)
+            updateUi(false)
         }
-        viewModel.deleteTaskEvent.observe(this) {
+        viewModel.deleteApiEvent.observe(this) {
             showToast("Task is deleted")
         }
+        viewModel.copyClipBoardLiveEvent.observe(this) {
+            copyIntoClipboard(it)
+        }
+        viewModel.saveApiEvent.observe(this) {
+            showToast("saved in DB successfully")
+        }
+    }
+
+    private fun copyIntoClipboard(it: String?) {
+        it?.let { it1 -> this@MainActivity.copyToClipboard(it1) }
+        showToast("Copied into Clipboard")
     }
 
     private fun showToast(message: String) {

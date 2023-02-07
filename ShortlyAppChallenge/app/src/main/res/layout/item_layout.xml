@@ -68,7 +68,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/shortenUrlBtn"
                 style="@style/CopyButtonTheme"
-
+                app:copyStatus="@{viewModel.isCopiedIntoClipboard(item.shortLink)}"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
